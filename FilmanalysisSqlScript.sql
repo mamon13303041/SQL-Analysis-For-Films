@@ -35,6 +35,7 @@ Union all
 SELECT count(*) 
 FROM `filmanalysis`.`movie`
 where production_company is null;
+
 #Q3. Find the total number of movies released each year? How does the trend look month wise? (Output expected)
 
 -- select month(relase_date),count(ID) as number_movies

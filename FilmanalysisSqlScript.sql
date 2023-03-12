@@ -8,33 +8,33 @@ from information_schema.tables
 where  TABLE_SCHEMA = 'filmanalysis'
 
 #Q2. Which columns in the movie table have null values?
--- SELECT count(*)
--- FROM `filmanalysis`.`movie`
--- where title is null
--- Union all
--- SELECT count(*) 
--- FROM `filmanalysis`.`movie`
--- where year is null
--- Union all
--- SELECT count(*) 
--- FROM `filmanalysis`.`movie`
--- where relase_date is null
--- Union all
--- SELECT count(*) 
--- FROM `filmanalysis`.`movie`
--- where country is null
--- Union all
--- SELECT count(*) 
--- FROM `filmanalysis`.`movie`
--- where worldwide_gross_earn is null
--- Union all
--- SELECT count(*) 
--- FROM `filmanalysis`.`movie`
--- where language is null
--- Union all
--- SELECT count(*) 
--- FROM `filmanalysis`.`movie`
--- where production_company is null;
+SELECT count(*)
+FROM `filmanalysis`.`movie`
+where title is null
+Union all
+SELECT count(*) 
+FROM `filmanalysis`.`movie`
+where year is null
+Union all
+SELECT count(*) 
+FROM `filmanalysis`.`movie`
+where relase_date is null
+Union all
+SELECT count(*) 
+FROM `filmanalysis`.`movie`
+where country is null
+Union all
+SELECT count(*) 
+FROM `filmanalysis`.`movie`
+where worldwide_gross_earn is null
+Union all
+SELECT count(*) 
+FROM `filmanalysis`.`movie`
+where language is null
+Union all
+SELECT count(*) 
+FROM `filmanalysis`.`movie`
+where production_company is null;
 #Q3. Find the total number of movies released each year? How does the trend look month wise? (Output expected)
 
 -- select month(relase_date),count(ID) as number_movies

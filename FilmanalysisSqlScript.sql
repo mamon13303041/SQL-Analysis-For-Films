@@ -62,34 +62,34 @@ where production_company is null;
 -- order by  number_of_movies desc
 -- limit 1;
 #Q7. How many movies belong to only one genre?
--- with one_ as (select movie_id,
--- count(distinct genre) as one_genre
--- from filmanalysis.genre
--- group by movie_id
--- having one_genre=1)
+with one_ as (select movie_id,
+count(distinct genre) as one_genre
+from filmanalysis.genre
+group by movie_id
+having one_genre=1)
 
--- select count(*) as one_genre
--- from one_;
+select count(*) as one_genre
+from one_;
 
 #Q8.What is the average duration of movies in each genre? 
--- SELECT genre, round((movie.duration),2) as movie_avglength
--- FROM filmanalysis.movie, filmanalysis.genre
--- WHERE movie.ID = genre.movie_id
--- GROUP BY genre
--- order by movie_avglength desc;
+SELECT genre, round((movie.duration),2) as movie_avglength
+FROM filmanalysis.movie, filmanalysis.genre
+WHERE movie.ID = genre.movie_id
+GROUP BY genre
+order by movie_avglength desc;
 
 #Q9.What is the rank of the ‘thriller’ genre of movies among all the genres in terms of number of movies produced? 
 
--- WITH genre_rank
---      AS (SELECT  genre,
---                  Count(DISTINCT movie_id) AS movie_count,
---                  Rank() OVER(ORDER BY Count(movie_id) DESC) AS genre_rank_info
--- 		FROM 	 filmanalysis.genre
--- 		GROUP BY genre
---          )
--- SELECT *
--- FROM   genre_rank
--- WHERE  genre = 'Thriller';
+WITH genre_rank
+     AS (SELECT  genre,
+                 Count(DISTINCT movie_id) AS movie_count,
+                 Rank() OVER(ORDER BY Count(movie_id) DESC) AS genre_rank_info
+		FROM 	 filmanalysis.genre
+		GROUP BY genre
+         )
+SELECT *
+FROM   genre_rank
+WHERE  genre = 'Thriller';
 
 #Part 2
 #Q10.  Find the minimum and maximum values in  each column of the ratings table except the movie_id column?

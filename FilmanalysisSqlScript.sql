@@ -93,13 +93,13 @@ WHERE  genre = 'Thriller';
 
 #Part 2
 #Q10.  Find the minimum and maximum values in  each column of the ratings table except the movie_id column?
--- select min(avg_rating) as minimum_rating,
--- max(avg_rating) as maximum_rating,
--- min(total_votes) as minimum_total_votes,
--- max(total_votes) as maximum_total_votes,
--- min(median_rating) as minimum_median_rating,
--- max(median_rating) as maximum_media_rating
--- from filmanalysis.ratings;
+select min(avg_rating) as minimum_rating,
+max(avg_rating) as maximum_rating,
+min(total_votes) as minimum_total_votes,
+max(total_votes) as maximum_total_votes,
+min(median_rating) as minimum_median_rating,
+max(median_rating) as maximum_media_rating
+from filmanalysis.ratings;
 
 #Q11. Which are the top 10 movies based on average rating?
 select title,

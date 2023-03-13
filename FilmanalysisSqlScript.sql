@@ -38,29 +38,29 @@ where production_company is null;
 
 #Q3. Find the total number of movies released each year? How does the trend look month wise? (Output expected)
 
--- select month(relase_date),count(ID) as number_movies
--- FROM `filmanalysis`.`movie`
--- GROUP BY  month(relase_date) order by number_movies DESC;
+select month(relase_date),count(ID) as number_movies
+FROM `filmanalysis`.`movie`
+GROUP BY  month(relase_date) order by number_movies DESC;
 #Q4. How many movies were produced in the Germany or USA in the year 2017??
--- select count(ID) as movie_count 
--- from filmanalysis.movie
--- #used regular expression to find strings containing USA or India
--- WHERE  country REGEXP 'USA|Germany'
--- AND year = 2017;
+select count(ID) as movie_count 
+from filmanalysis.movie
+#used regular expression to find strings containing USA or India
+WHERE  country REGEXP 'USA|Germany'
+AND year = 2017;
 #Q5. Find the unique list of the genres present in the data set?
 
--- select DISTINCT genre
--- from filmanalysis.genre;
+select DISTINCT genre
+from filmanalysis.genre;
 
 #Q6.Which genre had the highest number of movies produced overall?
--- select genre,
--- count(movie.ID) as number_of_movies
--- from filmanalysis.genre
--- inner join filmanalysis.movie
--- on genre.movie_id=movie.ID
--- group by genre
--- order by  number_of_movies desc
--- limit 1;
+select genre,
+count(movie.ID) as number_of_movies
+from filmanalysis.genre
+inner join filmanalysis.movie
+on genre.movie_id=movie.ID
+group by genre
+order by  number_of_movies desc
+limit 1;
 #Q7. How many movies belong to only one genre?
 with one_ as (select movie_id,
 count(distinct genre) as one_genre

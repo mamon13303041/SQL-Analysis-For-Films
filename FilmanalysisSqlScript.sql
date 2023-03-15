@@ -154,3 +154,58 @@ ON movie.ID = genre.movie_id
 WHERE  title LIKE 'The%'
 AND avg_rating > 8
 ORDER  BY avg_rating DESC; 
+
+# Q16. Of the movies released between 2 February 2018 and 15 decamber 2017, how many were given a median rating of 8?
+select count(ratings.movie_id) as movie_count
+from filmanalysis.ratings
+inner join filmanalysis.movie
+on ratings.movie_id=movie.ID
+where relase_date between '2017-02-22' and '2017-12-15'
+
+
+#Q17. Do German movies get more votes than USA movies? 
+select country,
+sum(total_votes)
+from filmanalysis.ratings
+inner join filmanalysis.movie
+on movie.ID=ratings.movie_id
+where country in( 'Germany' , 'USA')
+group by country;
+
+
+#Q18. Comparing total votes with respect to language the movies are available in, between German and english WITH german_movies
+
+with langauge_german as (select language,
+sum(total_votes) as total_votes
+from filmanalysis.ratings
+inner join filmanalysis.movie
+on movie.ID=ratings.movie_id
+where language like '%german'
+group by language)
+
+select 'german' as language,
+sum(total_votes)
+from langauge_german
+
+Union
+
+(with langauge_english as (select language,
+sum(total_votes) as total_votes
+from filmanalysis.ratings
+inner join filmanalysis.movie
+on movie.ID=ratings.movie_id
+where language like '%english'
+group by language)
+
+select 'english' as language,
+sum(total_votes)
+from langauge_english);
+
+#Q19. Which columns in the names table have null values??
+select 
+	sum(case when name is null then 1 else 0 end) as names, 
+    sum(case when height is null then 1 else 0 end) as Height, 
+    sum(case when date_of_birth is null then 1 else 0 end) as birth, 
+    sum(case when known_for_movies is null then 1 else 0 end) as Known_movies
+    
+from filmanalysis.names;

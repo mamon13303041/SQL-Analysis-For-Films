@@ -209,3 +209,45 @@ select
     sum(case when known_for_movies is null then 1 else 0 end) as Known_movies
     
 from filmanalysis.names;
+# Q20. Who are the top three directors in the top three genres whose movies have an average rating > 8?
+with top_three_genre as(
+select genre
+from filmanalysis.genre
+inner join filmanalysis.ratings
+using(movie_id)
+where avg_rating>8
+group by genre
+order by count(movie_id) desc
+limit 3
+),
+
+top_three_director as(
+select name as director_name,
+count(genre.movie_id) as movie_count,
+Rank() OVER(ORDER BY Count(genre.movie_id) DESC) AS director_rank
+from filmanalysis.genre
+inner join filmanalysis.director_maping
+on genre.movie_id=director_maping.name_id
+inner join filmanalysis.names
+on names.id=director_maping.name_id
+inner join filmanalysis.ratings
+on ratings.movie_id=genre.movie_id,top_three_genre
+WHERE avg_rating > 8
+AND genre.genre IN (top_three_genre.genre)
+GROUP BY names.name
+)
+
+#Q21. Who are the top two actors whose movies have a median rating >= 8?
+select name as actor_name,
+count(ratings.movie_id) as movie_count
+from filmanalysis.names
+inner join filmanalysis.role
+on names.id=role.name_id
+inner join filmanalysis.ratings 
+on role.movie_id=ratings.movie_id
+where median_rating>=8.0
+order by movie_count
+limit 2;
+select director_name,movie_count
+from top_three_director
+;

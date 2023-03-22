@@ -251,3 +251,33 @@ limit 2;
 select director_name,movie_count
 from top_three_director
 ;
+
+# Q22. Which are the top three production houses based on the number of votes received by their movies?
+select production_company,
+sum(ratings.total_votes) as vote_count,
+Rank() OVER(ORDER BY Sum(ratings.total_votes) DESC) AS prod_comp_rank
+from filmanalysis.movie
+inner join filmanalysis.ratings
+on movie.ID= ratings.movie_id
+
+group by production_company
+order by vote_count DESC 
+limit 3;
+
+#Q23. Rank actors with movies released in USA based on their average ratings. Which actor is at the top of the list?
+select name as actor_name,
+sum(ratings.total_votes) as vote_count,
+count(ratings.movie_id) as movie_count,
+Round(Sum(ratings.total_votes * ratings.avg_rating) / Sum(ratings.total_votes), 2) AS actor_avg_rating,
+Rank() OVER(ORDER BY Round(Sum(ratings.total_votes * ratings.avg_rating)/Sum(ratings.total_votes), 2) DESC, 
+Sum(ratings.total_votes) DESC) AS actor_rank
+from filmanalysis.names
+inner join filmanalysis.role
+on names.id=role.name_id
+inner join filmanalysis.ratings
+on role.movie_id=ratings.movie_id
+inner join filmanalysis.movie
+on role.movie_id=movie.ID
+where country='USA'
+;
+

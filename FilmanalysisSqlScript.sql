@@ -278,6 +278,114 @@ inner join filmanalysis.ratings
 on role.movie_id=ratings.movie_id
 inner join filmanalysis.movie
 on role.movie_id=movie.ID
+where country='USA';
+
+
+# Q24.Find out the top five actresses in USA movies released in USA based on their average ratings? 
+select name as actor_name,
+sum(ratings.total_votes) as vote_count,
+count(ratings.movie_id) as movie_count,
+Round(Sum(ratings.total_votes * ratings.avg_rating) / Sum(ratings.total_votes), 2) AS actor_avg_rating,
+Rank() OVER(ORDER BY Round(Sum(ratings.total_votes * ratings.avg_rating)/Sum(ratings.total_votes), 2) DESC, 
+Sum(ratings.total_votes) DESC) AS actor_rank
+from filmanalysis.names
+inner join filmanalysis.role
+on names.id=role.name_id
+inner join filmanalysis.ratings
+on role.movie_id=ratings.movie_id
+inner join filmanalysis.movie
+on role.movie_id=movie.ID
 where country='USA'
-;
+and category='actress'
+and language='english'
+order by actor_rank desc;
+
+#Q25. Which are the five highest-grossing movies of each year that belong to the top three genres? 
+WITH top_genres AS
+(SELECT genre 
+FROM   filmanalysis.genre 
+INNER JOIN filmanalysis.ratings 
+ON genre.movie_id = ratings.movie_id
+WHERE  avg_rating > 8
+GROUP  BY genre
+ORDER  BY Count(ratings.movie_id) DESC
+LIMIT  3
+),
+movie_gross_earn AS
+(SELECT genre.genre, year, title AS movie_name,
+CASE
+WHEN worldwide_gross_earn LIKE '€%' 
+THEN Cast(Replace(worldwide_gross_earn, '€', '') AS DECIMAL(10)) / 1.07
+WHEN worldwide_gross_earn LIKE 'INR%' 
+THEN Cast(Replace(worldwide_gross_earn, 'INR', '') AS DECIMAL(10)) /82.0
+WHEN worldwide_gross_earn LIKE 'BD%' 
+THEN Cast(Replace(worldwide_gross_earn, 'BD', '') AS DECIMAL(10)) /105.20
+WHEN worldwide_gross_earn LIKE '$%' 
+THEN Cast(Replace(worldwide_gross_earn, '$', '') AS DECIMAL(10))
+ELSE Cast(worldwide_gross_earn AS DECIMAL(10))
+END worldwide_gross_earn
+FROM  filmanalysis.genre 
+INNER JOIN filmanalysis.movie 
+ON genre.movie_id = movie.ID,top_genres
+WHERE  genre.genre IN (top_genres.genre)
+GROUP  BY movie_name,year
+),
+highest_ranked_movies AS
+(SELECT *,
+rank() OVER(partition BY year ORDER BY worldwide_gross_earn DESC) AS movie_rank
+FROM movie_gross_earn
+)
+SELECT *
+FROM highest_ranked_movies
+WHERE  movie_rank <= 5;
+
+
+#  Q26. Select thriller movies as per avg rating and classify them in the following category: 
+
+-- 			Rating > 8: Superhit movies
+-- 			Rating between 7 and 8: Hit movies
+-- 			Rating between 5 and 7: One-time-watch movies
+-- 			Rating < 5: Flop movies
+
+select title as movie_title,
+avg_rating,
+case
+when avg_rating > 8 then 'Superhit Movie'
+when avg_rating between 7 and  8 then 'Hit Movie'
+when avg_rating between 5 and  8 then ' One-time-watch movies'
+else 'flop movie'
+end
+from filmanalysis.ratings
+inner join filmanalysis.movie
+on movie.ID=ratings.movie_id
+inner join filmanalysis.genre
+on movie.ID=genre.movie_id
+where genre='Thriller';
+
+
+
+
+# Q27. What is the genre-wise running total and moving average of the average movie duration? 
+select genre,
+round(avg(duration)) as average_duration,
+round(sum(avg(duration)) over (order by genre rows UNBOUNDED PRECEDING),2) as running_total,
+round(sum(avg(duration)) over (order by genre rows between 3 preceding and 2 following),2) as moving_average
+from filmanalysis.genre
+inner join filmanalysis.movie
+on movie.ID=genre.movie_id
+group by genre;
+
+
+#Q28.  Which are the top two production houses that have produced the highest number of hits (median rating >= 7) among multilingual movies?
+SELECT production_company,
+Count(ratings.movie_id) AS movie_count,
+Rank() over(ORDER BY Count(ratings.movie_id) DESC) 	AS production_company_rank
+FROM   filmanalysis.ratings 
+INNER JOIN movie 
+ON ratings.movie_id = movie.ID
+WHERE  production_company IS NOT NULL
+AND median_rating >= 7
+AND Position(',' IN language) > 0
+GROUP  BY production_company
+limit 2;
 
